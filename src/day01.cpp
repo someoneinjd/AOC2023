@@ -6,6 +6,8 @@
 #include <string_view>
 #include <utility>
 
+#include "util.hpp"
+
 constexpr std::string_view input{
 #include "../dataset/day01_1.txt"
 };
@@ -16,8 +18,7 @@ namespace rg = std::ranges;
 consteval std::size_t solution1(const std::string_view input) {
     std::size_t sum{};
     constexpr auto find_first = [](auto &&r) consteval {
-        return *rg::find_if(r, [](char ch) { return ch >= '0' && ch <= '9'; }) -
-               '0';
+        return *rg::find_if(r, util::is_digit) - '0';
     };
     for (auto line : input | rv::split('\n'))
         sum += 10 * find_first(line) + find_first(line | rv::reverse);
@@ -52,7 +53,7 @@ consteval std::size_t solution2(const std::string_view input) {
         auto end = rg::end(r);
         std::size_t first;
         for (; begin != end; begin = rg::next(begin)) {
-            if (*begin >= '0' && *begin <= '9') {
+            if (util::is_digit(*begin)) {
                 first = *begin - '0';
                 break;
             };
