@@ -16,12 +16,7 @@ constexpr std::string_view input{
 constexpr auto parse_num(auto &&r) {
     auto begin = rg::find_if(FWD(r), util::is_digit);
     auto end = rg::find_if_not(begin, rg::end(FWD(r)), util::is_digit);
-    std::size_t val{};
-    for (char ch : rg::subrange(begin, end)) {
-        val += ch - '0';
-        val *= 10;
-    }
-    return std::pair{rg::subrange(end, rg::end(FWD(r))), val / 10};
+    return std::pair{rg::subrange(end, rg::end(FWD(r))), util::parse_digits(begin, end)};
 }
 
 constexpr auto parse_color(auto &&r) {
