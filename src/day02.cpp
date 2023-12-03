@@ -29,7 +29,7 @@ constexpr auto parse_color(auto &&r) {
     return (ch <= 'g') + (ch == 'b');
 }
 
-constexpr auto solution1(const std::string_view input) {
+constexpr auto solution1(const std::string_view str) {
     constexpr auto check_set = [](auto &&r) {
         for (auto cube : r | rv::split(',')) {
             const auto [left, num] = parse_num(cube);
@@ -39,7 +39,7 @@ constexpr auto solution1(const std::string_view input) {
     };
 
     std::size_t sum{};
-    for (auto line : input | rv::split('\n')) {
+    for (auto line : str | rv::split('\n')) {
         const auto [left, id] = parse_num(line);
         if (rg::all_of(left | rv::split(';'), check_set)) sum += id;
     }
@@ -47,7 +47,7 @@ constexpr auto solution1(const std::string_view input) {
     return sum;
 }
 
-constexpr auto solution2(const std::string_view input) {
+constexpr auto solution2(const std::string_view str) {
     constexpr auto check_set = [](auto &&r, auto &&max_nums) {
         for (auto cube : r | rv::split(',')) {
             const auto [left, num] = parse_num(cube);
@@ -57,7 +57,7 @@ constexpr auto solution2(const std::string_view input) {
     };
 
     std::size_t sum{};
-    for (auto line : input | rv::split('\n')) {
+    for (auto line : str | rv::split('\n')) {
         std::array<std::size_t, 3> max_nums{};
         const auto [left, _] = parse_num(line);
         for (auto set : left | rv::split(';')) check_set(set, max_nums);
