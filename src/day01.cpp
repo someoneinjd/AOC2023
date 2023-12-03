@@ -43,8 +43,8 @@ constexpr std::size_t match(auto &&r) {
 constexpr std::size_t solution2(const std::string_view str) {
     std::size_t sum{};
     constexpr auto find_first = []<bool Reverse = false>(auto &&r) {
-        auto begin = rg::begin(FWD(r));
-        auto end = rg::end(FWD(r));
+        auto begin = rg::begin(r);
+        auto end = rg::end(r);
         std::size_t first;
         for (; begin != end; begin = rg::next(begin)) {
             if (util::is_digit(*begin)) {

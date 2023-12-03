@@ -26,6 +26,10 @@ constexpr std::size_t parse_digits(const auto &r) {
     return val / 10;
 }
 
+constexpr std::size_t parse_digits(const auto &begin, const auto &end) {
+    return parse_digits(std::ranges::subrange(begin, end));
+}
+
 template <std::ranges::input_range Range1, std::ranges::input_range Range2,
           class Pred = std::ranges::equal_to, class Proj1 = std::identity,
           class Proj2 = std::identity>
@@ -37,10 +41,6 @@ constexpr bool starts_with(Range1 &&range1, Range2 &&range2, Pred pred = {}, Pro
                                  std::ranges::begin(range2), std::ranges::end(range2), pred, proj1,
                                  proj2)
                .in2 == std::ranges::end(range2);
-}
-
-constexpr std::size_t parse_digits(const auto &begin, const auto &end) {
-    return parse_digits(std::ranges::subrange(begin, end));
 }
 
 void print(auto &&...args) {
