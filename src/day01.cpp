@@ -17,8 +17,8 @@ namespace rg = std::ranges;
 
 consteval std::size_t solution1(const std::string_view input) {
     std::size_t sum{};
-    constexpr auto find_first = [](auto &&r) consteval {
-        return *rg::find_if(r, util::is_digit) - '0';
+    constexpr auto find_first = [](auto &&r) {
+        return *rg::find_if(FWD(r), util::is_digit) - '0';
     };
     for (auto line : input | rv::split('\n'))
         sum += 10 * find_first(line) + find_first(line | rv::reverse);
@@ -32,25 +32,26 @@ consteval std::size_t match(auto &&r, std::index_sequence<I...>) {
     std::size_t ret = 10;
     if constexpr (Reverse)
         ([&] {
-            return rg::starts_with(r, nums[I] | rv::reverse) && (ret = I + 1);
+            return rg::starts_with(FWD(r), nums[I] | rv::reverse) &&
+                   (ret = I + 1);
         }() ||
          ...);
     else
-        ([&] { return rg::starts_with(r, nums[I]) && (ret = I + 1); }() || ...);
+        ([&] { return rg::starts_with(FWD(r), nums[I]) && (ret = I + 1); }() ||
+         ...);
     return ret;
 }
 
 template <bool Reverse>
 consteval std::size_t match(auto &&r) {
-    return match<Reverse>(std::forward<decltype(r)>(r),
-                          std::make_index_sequence<9>{});
+    return match<Reverse>(FWD(r), std::make_index_sequence<9>{});
 }
 
 consteval std::size_t solution2(const std::string_view input) {
     std::size_t sum{};
-    constexpr auto find_first = []<bool Reverse = false>(auto &&r) consteval {
-        auto begin = rg::begin(r);
-        auto end = rg::end(r);
+    constexpr auto find_first = []<bool Reverse = false>(auto &&r) {
+        auto begin = rg::begin(FWD(r));
+        auto end = rg::end(FWD(r));
         std::size_t first;
         for (; begin != end; begin = rg::next(begin)) {
             if (util::is_digit(*begin)) {
@@ -61,10 +62,9 @@ consteval std::size_t solution2(const std::string_view input) {
         }
         return first;
     };
-    for (auto line : input | rv::split('\n')) {
+    for (auto line : input | rv::split('\n'))
         sum += find_first(line) * 10 +
-               find_first.template operator()<true>(line | rv::reverse);
-    }
+               find_first.operator()<true>(line | rv::reverse);
     return sum;
 }
 

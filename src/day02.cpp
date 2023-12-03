@@ -15,18 +15,18 @@ constexpr std::string_view input{
 };
 
 consteval auto parse_num(auto &&r) {
-    auto begin = rg::find_if(r, util::is_digit);
-    auto end = rg::find_if_not(begin, rg::end(r), util::is_digit);
+    auto begin = rg::find_if(FWD(r), util::is_digit);
+    auto end = rg::find_if_not(begin, rg::end(FWD(r)), util::is_digit);
     std::size_t val{};
     for (char ch : rg::subrange(begin, end)) {
         val += ch - '0';
         val *= 10;
     }
-    return std::pair{rg::subrange(end, rg::end(r)), val / 10};
+    return std::pair{rg::subrange(end, rg::end(FWD(r))), val / 10};
 }
 
 consteval auto parse_color(auto &&r) {
-    char ch = *rg::find_if(r, util::is_alpha);
+    char ch = *rg::find_if(FWD(r), util::is_alpha);
     return (ch <= 'g') + (ch == 'b');
 }
 
@@ -49,26 +49,20 @@ consteval auto solution1(const std::string_view input) {
 }
 
 consteval auto solution2(const std::string_view input) {
-    constexpr auto check_set = [](auto &&r) {
-        std::array<std::size_t, 3> nums{};
+    constexpr auto check_set = [](auto &&r, auto &&max_nums) {
         for (auto cube : r | rv::split(',')) {
             const auto [left, num] = parse_num(cube);
-            nums[parse_color(left)] = num;
+            auto color = parse_color(left);
+            max_nums[color] = std::max(max_nums[color], num);
         }
-        return nums;
     };
 
     std::size_t sum{};
     for (auto line : input | rv::split('\n')) {
-        size_t max_red = 0, max_green = 0, max_blue = 0;
+        std::array<std::size_t, 3> max_nums{};
         const auto [left, _] = parse_num(line);
-        for (auto set : left | rv::split(';')) {
-            const auto [r, g, b] = check_set(set);
-            max_red = std::max(max_red, r);
-            max_green = std::max(max_green, g);
-            max_blue = std::max(max_blue, b);
-        }
-        sum += max_red * max_green * max_blue;
+        for (auto set : left | rv::split(';')) check_set(set, max_nums);
+        sum += max_nums[0] * max_nums[1] * max_nums[2];
     }
     return sum;
 }
