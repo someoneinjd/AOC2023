@@ -1,12 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 project(aoc2023 LANGUAGES CXX)
 
-if(APPLE)
-    execute_process(COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE full_version_string)
-    string(REGEX REPLACE "([A-Za-z]+) clang version.*" "\\1" HOMEBREW_CLANG ${full_version_string})
-endif()
-
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
