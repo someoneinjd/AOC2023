@@ -5,7 +5,7 @@
 ## Compile && Run
 
 ```shell
-cmake -G Ninja -B build/
+cmake -DCMAKE_BUILD_TYPE=Release -G Ninja -B build/
 cmake --build build --target day[01 | 02 | ...]
 ./build/day[01 | 02 | ...]
 ```

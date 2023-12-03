@@ -12,6 +12,8 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 
+string(REPLACE "-O3" "-O2" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+
 foreach(day RANGE 1 25)
     if(${day} LESS "10")
         string(PREPEND day "day0")
@@ -25,7 +27,6 @@ foreach(day RANGE 1 25)
         target_link_directories(${day} PRIVATE "/usr/local/opt/llvm/lib/c++/")
     endif()
     target_compile_options(${day} PRIVATE $<IF:$<CXX_COMPILER_ID:MSVC>,/W4,-Wall>
-                                          $<IF:$<CXX_COMPILER_ID:MSVC>,/O2,-O2>
                                           $<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>
                                           $<$<CXX_COMPILER_ID:MSVC>:/constexpr:steps16777216>
                                           $<$<CXX_COMPILER_ID:AppleClang,Clang>:-fconstexpr-steps=16777216>
