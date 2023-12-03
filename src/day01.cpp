@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
-#include <print>
 #include <ranges>
 #include <string_view>
 #include <utility>
@@ -15,39 +14,32 @@ constexpr std::string_view input{
 namespace rv = std::ranges::views;
 namespace rg = std::ranges;
 
-consteval std::size_t solution1(const std::string_view input) {
+constexpr std::size_t solution1(const std::string_view input) {
     std::size_t sum{};
-    constexpr auto find_first = [](auto &&r) {
-        return *rg::find_if(FWD(r), util::is_digit) - '0';
-    };
+    constexpr auto find_first = [](auto &&r) { return *rg::find_if(FWD(r), util::is_digit) - '0'; };
     for (auto line : input | rv::split('\n'))
         sum += 10 * find_first(line) + find_first(line | rv::reverse);
     return sum;
 }
 
 template <bool Reverse, std::size_t... I>
-consteval std::size_t match(auto &&r, std::index_sequence<I...>) {
-    constexpr std::string_view nums[] = {
-        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+constexpr std::size_t match(auto &&r, std::index_sequence<I...>) {
+    constexpr std::string_view nums[] = {"one", "two",   "three", "four", "five",
+                                         "six", "seven", "eight", "nine"};
     std::size_t ret = 10;
     if constexpr (Reverse)
-        ([&] {
-            return rg::starts_with(FWD(r), nums[I] | rv::reverse) &&
-                   (ret = I + 1);
-        }() ||
-         ...);
+        ([&] { return rg::starts_with(FWD(r), nums[I] | rv::reverse) && (ret = I + 1); }() || ...);
     else
-        ([&] { return rg::starts_with(FWD(r), nums[I]) && (ret = I + 1); }() ||
-         ...);
+        ([&] { return rg::starts_with(FWD(r), nums[I]) && (ret = I + 1); }() || ...);
     return ret;
 }
 
 template <bool Reverse>
-consteval std::size_t match(auto &&r) {
+constexpr std::size_t match(auto &&r) {
     return match<Reverse>(FWD(r), std::make_index_sequence<9>{});
 }
 
-consteval std::size_t solution2(const std::string_view input) {
+constexpr std::size_t solution2(const std::string_view input) {
     std::size_t sum{};
     constexpr auto find_first = []<bool Reverse = false>(auto &&r) {
         auto begin = rg::begin(FWD(r));
@@ -63,14 +55,13 @@ consteval std::size_t solution2(const std::string_view input) {
         return first;
     };
     for (auto line : input | rv::split('\n'))
-        sum += find_first(line) * 10 +
-               find_first.operator()<true>(line | rv::reverse);
+        sum += find_first(line) * 10 + find_first.operator()<true>(line | rv::reverse);
     return sum;
 }
 
 int main() {
     constexpr auto i = solution1(input);
     constexpr auto j = solution2(input);
-    std::println("{}\n{}", i, j);
+    util::print(i, j);
     return 0;
 }

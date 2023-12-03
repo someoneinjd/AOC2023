@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
-#include <print>
 #include <ranges>
 #include <string_view>
 
@@ -14,7 +13,7 @@ constexpr std::string_view input{
 #include "../dataset/day02_1.txt"
 };
 
-consteval auto parse_num(auto &&r) {
+constexpr auto parse_num(auto &&r) {
     auto begin = rg::find_if(FWD(r), util::is_digit);
     auto end = rg::find_if_not(begin, rg::end(FWD(r)), util::is_digit);
     std::size_t val{};
@@ -25,16 +24,16 @@ consteval auto parse_num(auto &&r) {
     return std::pair{rg::subrange(end, rg::end(FWD(r))), val / 10};
 }
 
-consteval auto parse_color(auto &&r) {
+constexpr auto parse_color(auto &&r) {
     char ch = *rg::find_if(FWD(r), util::is_alpha);
     return (ch <= 'g') + (ch == 'b');
 }
 
-consteval auto solution1(const std::string_view input) {
+constexpr auto solution1(const std::string_view input) {
     constexpr auto check_set = [](auto &&r) {
         for (auto cube : r | rv::split(',')) {
             const auto [left, num] = parse_num(cube);
-            if (num > 12 + parse_color(left)) return false;
+            if (num > 12u + parse_color(left)) return false;
         }
         return true;
     };
@@ -48,7 +47,7 @@ consteval auto solution1(const std::string_view input) {
     return sum;
 }
 
-consteval auto solution2(const std::string_view input) {
+constexpr auto solution2(const std::string_view input) {
     constexpr auto check_set = [](auto &&r, auto &&max_nums) {
         for (auto cube : r | rv::split(',')) {
             const auto [left, num] = parse_num(cube);
@@ -70,5 +69,5 @@ consteval auto solution2(const std::string_view input) {
 int main() {
     constexpr auto i = solution1(input);
     constexpr auto j = solution2(input);
-    std::println("{}\n{}", i, j);
+    util::print(i, j);
 }

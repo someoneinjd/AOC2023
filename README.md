@@ -1,6 +1,6 @@
 # Advent of Code 2023
 
-These solutions are implemented using C++23 and Clang 17+ and CMake 3.20+ are required.
+> These solutions are implemented using C++23.
 
 ## Compile && Run
 

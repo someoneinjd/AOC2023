@@ -1,23 +1,16 @@
-cmake_minimum_required(VERSION 3.20)
-
-find_program(CLANG "clang" REQUIRED)
-set(CMAKE_C_COMPILER "clang")
-set(CMAKE_CXX_COMPILER "clang++")
-execute_process(COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string)
-string(REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
-if(CLANG_VERSION_STRING VERSION_LESS 17.0.0)
-    message(FATAL "clang 17+ is required, current version = ${CLANG_VERSION_STRING}")
-endif()
+cmake_minimum_required(VERSION 3.24)
+project(aoc2023 LANGUAGES CXX)
 
 if(APPLE)
-    string(REGEX REPLACE "([A-Za-z]+) clang version.*" "\\1" HOMEBREW_CLANG ${clang_full_version_string})
+    execute_process(COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE full_version_string)
+    string(REGEX REPLACE "([A-Za-z]+) clang version.*" "\\1" HOMEBREW_CLANG ${full_version_string})
 endif()
 
-project(aoc2023)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_COLOR_DIAGNOSTICS ON)
 
 foreach(day RANGE 1 25)
     if(${day} LESS "10")
@@ -27,9 +20,14 @@ foreach(day RANGE 1 25)
     endif()
     add_executable(${day} "${CMAKE_CURRENT_SOURCE_DIR}/src/${day}.cpp")
     target_include_directories(${day} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-    if(APPLE AND (${HOMEBREW_CLANG} STREQUAL "Homebrew"))
+    if(APPLE AND (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
         target_include_directories(${day} PRIVATE "/usr/local/opt/llvm/include/c++/v1")
         target_link_directories(${day} PRIVATE "/usr/local/opt/llvm/lib/c++/")
     endif()
-    target_compile_options(${day} PRIVATE -fdiagnostics-color=always -Wall -O2 -fconstexpr-steps=16777216)
+    target_compile_options(${day} PRIVATE $<IF:$<CXX_COMPILER_ID:MSVC>,/W4,-Wall>
+                                          $<IF:$<CXX_COMPILER_ID:MSVC>,/O2,-O2>
+                                          $<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>
+                                          $<$<CXX_COMPILER_ID:MSVC>:/constexpr:steps16777216>
+                                          $<$<CXX_COMPILER_ID:AppleClang,Clang>:-fconstexpr-steps=16777216>
+                                          $<$<CXX_COMPILER_ID:GNU>:-fconstexpr-loop-limit=16777216 -fconstexpr-ops-limit=16777216>)
 endforeach()
