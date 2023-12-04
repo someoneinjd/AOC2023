@@ -28,10 +28,9 @@ constexpr std::size_t match(auto &&r, std::index_sequence<I...>) {
                                          "six", "seven", "eight", "nine"};
     std::size_t ret = 10;
     if constexpr (Reverse)
-        ([&] { return util::starts_with(FWD(r), nums[I] | rv::reverse) && (ret = I + 1); }() ||
-         ...);
+        ((util::starts_with(FWD(r), nums[I] | rv::reverse) && (ret = I + 1)) || ...);
     else
-        ([&] { return util::starts_with(FWD(r), nums[I]) && (ret = I + 1); }() || ...);
+        ((util::starts_with(FWD(r), nums[I]) && (ret = I + 1)) || ...);
     return ret;
 }
 
