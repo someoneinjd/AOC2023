@@ -6,12 +6,12 @@
 
 #include "util.hpp"
 
-namespace rv = std::ranges::views;
-namespace rg = std::ranges;
-
 constexpr std::string_view input{
 #include "../dataset/day02_1.txt"
 };
+
+namespace rv = std::ranges::views;
+namespace rg = std::ranges;
 
 constexpr auto parse_num(auto &&r) {
     auto begin = rg::find_if(FWD(r), util::is_digit);
