@@ -1,6 +1,8 @@
 #pragma once
 
+#include <utility>
 #if __has_include(<print>)
+#include <format>
 #include <print>
 #else
 #include <iostream>
@@ -10,6 +12,9 @@
 #include <ranges>
 
 #define FWD(r) std::forward<decltype(r)>(r)
+
+constexpr static std::size_t ZERO = 0;
+constexpr static std::size_t ONE = 1;
 
 namespace util {
 
@@ -44,11 +49,13 @@ constexpr bool starts_with(Range1 &&range1, Range2 &&range2, Pred pred = {}, Pro
 }
 
 void print(auto &&...args) {
+    []<std::size_t... I>(std::index_sequence<I...>, auto &&...args) {
 #if __has_include(<print>)
-    (std::println("{}", FWD(args)), ...);
+        (std::println("{}. {}", I, FWD(args)), ...);
 #else
-    ((std::cout << FWD(args) << "\n"), ...);
+        ((std::cout << I << ". " << FWD(args) << "\n"), ...);
 #endif
+    }(std::make_index_sequence<sizeof...(args)>{}, FWD(args)...);
 }
 
 }  // namespace util

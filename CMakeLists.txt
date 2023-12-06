@@ -24,5 +24,6 @@ foreach(day RANGE 1 25)
                                           $<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>
                                           $<$<CXX_COMPILER_ID:MSVC>:/constexpr:steps16777216>
                                           $<$<CXX_COMPILER_ID:AppleClang,Clang>:-fconstexpr-steps=16777216>
+                                          $<$<CXX_COMPILER_ID:AppleClang,Clang>:-D_LIBCPP_ENABLE_EXPERIMENTAL>
                                           $<$<CXX_COMPILER_ID:GNU>:-fconstexpr-loop-limit=16777216 -fconstexpr-ops-limit=67108864>)
 endforeach()

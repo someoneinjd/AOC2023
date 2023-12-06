@@ -36,7 +36,7 @@ constexpr auto solution1(const std::string_view str) {
     };
 
     std::size_t sum = 0;
-    for (auto line : rv::iota(std::size_t{1}, line_length + 1)) {
+    for (auto line : rv::iota(ONE, line_length + 1)) {
         const auto begin = map[line].begin();
         const auto end = map[line].end();
         for (auto iter = rg::find_if(map[line], util::is_digit); iter != end;
@@ -64,7 +64,7 @@ constexpr auto solution2(const std::string_view str) {
 
     using T = std::pair<std::size_t, std::vector<size_t>>;
     std::vector<T> vec{};
-    for (auto line : rv::iota(std::size_t{1}, line_length + 1)) {
+    for (auto line : rv::iota(ONE, line_length + 1)) {
         const auto begin = map[line].begin();
         const auto end = map[line].end();
         for (auto iter = rg::find_if(map[line], util::is_digit); iter != end;
