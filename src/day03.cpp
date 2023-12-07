@@ -6,7 +6,7 @@
 
 #include "util.hpp"
 
-constexpr std::string_view input{
+constexpr static std::string_view input{
 #include "../dataset/day03_1.txt"
 };
 
@@ -17,7 +17,7 @@ constexpr auto line_length = input.find('\n');
 
 constexpr auto to_map(const std::string_view str) {
     std::vector<std::string> vec(line_length + 2, std::string(line_length + 2, '.'));
-    std::size_t i = 1;
+    auto i = ONE;
     for (auto line : str | rv::split('\n')) rg::copy(line, rg::next(vec[i++].begin()));
     return vec;
 }
@@ -35,7 +35,7 @@ constexpr auto solution1(const std::string_view str) {
                map[line][begin - 1] != '.' || map[line][end] != '.';
     };
 
-    std::size_t sum = 0;
+    auto sum = ZERO;
     for (auto line : rv::iota(ONE, line_length + 1)) {
         const auto begin = map[line].begin();
         const auto end = map[line].end();
@@ -82,7 +82,7 @@ constexpr auto solution2(const std::string_view str) {
         }
     }
 
-    std::size_t sum = 0;
+    auto sum = ZERO;
     for (const auto &[_, nums] : vec)
         if (nums.size() == 2) sum += nums[0] * nums[1];
     return sum;

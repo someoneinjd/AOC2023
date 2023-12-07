@@ -8,7 +8,7 @@
 
 #include "util.hpp"
 
-constexpr std::string_view input{
+constexpr static std::string_view input{
 #include "../dataset/day05_1.txt"
 };
 

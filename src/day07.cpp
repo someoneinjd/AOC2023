@@ -6,7 +6,7 @@
 
 #include "util.hpp"
 
-constexpr std::string_view input{
+constexpr static std::string_view input{
 #include "../dataset/day07_1.txt"
 };
 
@@ -17,7 +17,7 @@ using P = std::tuple<std::array<std::uint8_t, 5>, std::size_t, std::size_t>;
 
 constexpr auto get_kind(const auto &cards) {
     std::vector<std::pair<std::size_t, std::uint8_t>> parts{};
-    std::size_t begin = 0, count_j = 0;
+    auto begin = ZERO, count_j = ZERO;
     while (begin < 5) {
         std::size_t count = 1;
         while (count + begin < 5 && cards[begin] == cards[begin + count]) count++;

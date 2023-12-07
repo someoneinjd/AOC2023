@@ -6,7 +6,7 @@
 
 #include "util.hpp"
 
-constexpr std::string_view input{
+constexpr static std::string_view input{
 #include "../dataset/day02_1.txt"
 };
 
@@ -33,12 +33,11 @@ constexpr auto solution1(const std::string_view str) {
         return true;
     };
 
-    std::size_t sum{};
+    auto sum = ZERO;
     for (auto line : str | rv::split('\n')) {
         const auto [left, id] = parse_num(line);
         if (rg::all_of(left | rv::split(';'), check_set)) sum += id;
     }
-
     return sum;
 }
 
@@ -51,7 +50,7 @@ constexpr auto solution2(const std::string_view str) {
         }
     };
 
-    std::size_t sum{};
+    auto sum = ZERO;
     for (auto line : str | rv::split('\n')) {
         std::array<std::size_t, 3> max_nums{};
         const auto [left, _] = parse_num(line);

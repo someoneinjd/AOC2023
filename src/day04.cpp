@@ -8,7 +8,7 @@
 
 #include "util.hpp"
 
-constexpr std::string_view input{
+constexpr static std::string_view input{
 #include "../dataset/day04_1.txt"
 };
 
@@ -25,13 +25,13 @@ constexpr auto match(auto first1, auto last1, auto first2, auto last2) {
     const auto winning = parse_nums(rg::subrange(first1, last1));
     const auto we_have = parse_nums(rg::subrange(first2, last2));
 
-    std::size_t sum{};
+    auto sum = ZERO;
     for (auto num : we_have) sum += rg::find(winning, num) != rg::end(winning);
     return sum;
 };
 
 constexpr auto solution1(const std::string_view str) {
-    std::size_t sum{};
+    auto sum = ZERO;
     for (auto line : str | rv::split('\n')) {
         auto winning_num_begin = rg::next(rg::find(line, ':'));
         auto winning_num_end = rg::find(line, '|');
@@ -45,7 +45,7 @@ constexpr auto solution1(const std::string_view str) {
 constexpr auto solution2(const std::string_view str) {
     constexpr auto length = rg::count(input, '\n') + 1;
     std::array<std::size_t, length> card_nums{};
-    std::size_t i = 0, sum = 0;
+    auto i = ZERO, sum = ZERO;
     for (auto line : str | rv::split('\n')) {
         card_nums[i] += 1;
         auto winning_num_begin = rg::next(rg::find(line, ':'));

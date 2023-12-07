@@ -6,7 +6,7 @@
 
 #include "util.hpp"
 
-constexpr std::string_view input{
+constexpr static std::string_view input{
 #include "../dataset/day06_1.txt"
 };
 
@@ -14,8 +14,8 @@ namespace rv = std::ranges::views;
 namespace rg = std::ranges;
 
 constexpr auto count_win(auto time, auto distance) {
-    auto search_space_0 = rv::iota(ONE, time / 2 + 1);
-    auto first_match = *rg::lower_bound(search_space_0, distance,
+    auto search_space = rv::iota(ONE, time / 2 + 1);
+    auto first_match = *rg::lower_bound(search_space, distance,
                                         [&](auto i, auto j) { return i * (time - i) < j; });
     return time - first_match - first_match + 1;
 }
@@ -28,7 +28,7 @@ constexpr auto solution1(const std::string_view str) {
                         }))
             nums.push_back(util::parse_digits(num));
 
-    std::size_t product = 1;
+    auto product = ONE;
     for (std::size_t i : rv::iota(ZERO, nums.size() / 2))
         product *= count_win(nums[i], nums[i + nums.size() / 2]);
     return product;
