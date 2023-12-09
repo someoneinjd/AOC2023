@@ -15,11 +15,10 @@ namespace rv = std::ranges::views;
 namespace rg = std::ranges;
 
 constexpr std::size_t solution1(const std::string_view str) {
-    auto sum = ZERO;
     constexpr auto find_first = [](auto &&r) { return *rg::find_if(FWD(r), util::is_digit) - '0'; };
-    for (auto line : str | rv::split('\n'))
-        sum += 10 * find_first(line) + find_first(line | rv::reverse);
-    return sum;
+    return util::reduce(str | rv::split('\n'), [find_first](auto &&r) {
+        return 10 * find_first(r) + find_first(r | rv::reverse);
+    });
 }
 
 template <bool Reverse, std::size_t... I>
@@ -40,7 +39,6 @@ constexpr std::size_t match(auto &&r) {
 }
 
 constexpr std::size_t solution2(const std::string_view str) {
-    auto sum = ZERO;
     constexpr auto find_first = []<bool Reverse = false>(auto &&r) {
         auto begin = rg::begin(r);
         auto end = rg::end(r);
@@ -54,9 +52,9 @@ constexpr std::size_t solution2(const std::string_view str) {
         }
         return first;
     };
-    for (auto line : str | rv::split('\n'))
-        sum += find_first(line) * 10 + find_first.operator()<true>(line | rv::reverse);
-    return sum;
+    return util::reduce(str | rv::split('\n'), [find_first](auto &&r) {
+        return 10 * find_first(r) + find_first.operator()<true>(r | rv::reverse);
+    });
 }
 
 int main() {

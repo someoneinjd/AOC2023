@@ -82,10 +82,11 @@ constexpr auto solution2(const std::string_view str) {
         }
     }
 
-    auto sum = ZERO;
-    for (const auto &[_, nums] : vec)
-        if (nums.size() == 2) sum += nums[0] * nums[1];
-    return sum;
+    return util::reduce(vec, [](auto &&i) {
+        const auto &[_, nums] = i;
+        if (nums.size() == 2) return nums[0] * nums[1];
+        return ZERO;
+    });
 }
 
 int main() {

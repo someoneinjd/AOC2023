@@ -24,10 +24,9 @@ constexpr auto match(auto first1, auto last1, auto first2, auto last2) {
     };
     const auto winning = parse_nums(rg::subrange(first1, last1));
     const auto we_have = parse_nums(rg::subrange(first2, last2));
-
-    auto sum = ZERO;
-    for (auto num : we_have) sum += rg::find(winning, num) != rg::end(winning);
-    return sum;
+    return util::reduce(we_have, [&winning](auto num) -> std::size_t {
+        return rg::find(winning, num) != rg::end(winning);
+    });
 };
 
 constexpr auto solution1(const std::string_view str) {

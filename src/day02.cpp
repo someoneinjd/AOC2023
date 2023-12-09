@@ -33,12 +33,11 @@ constexpr auto solution1(const std::string_view str) {
         return true;
     };
 
-    auto sum = ZERO;
-    for (auto line : str | rv::split('\n')) {
-        const auto [left, id] = parse_num(line);
-        if (rg::all_of(left | rv::split(';'), check_set)) sum += id;
-    }
-    return sum;
+    return util::reduce(str | rv::split('\n'), [check_set](auto &&r) {
+        const auto [left, id] = parse_num(FWD(r));
+        if (rg::all_of(left | rv::split(';'), check_set)) return id;
+        return ZERO;
+    });
 }
 
 constexpr auto solution2(const std::string_view str) {
@@ -50,14 +49,12 @@ constexpr auto solution2(const std::string_view str) {
         }
     };
 
-    auto sum = ZERO;
-    for (auto line : str | rv::split('\n')) {
+    return util::reduce(str | rv::split('\n'), [check_set](auto &&r) {
         std::array<std::size_t, 3> max_nums{};
-        const auto [left, _] = parse_num(line);
+        const auto [left, _] = parse_num(FWD(r));
         for (auto set : left | rv::split(';')) check_set(set, max_nums);
-        sum += max_nums[0] * max_nums[1] * max_nums[2];
-    }
-    return sum;
+        return max_nums[0] * max_nums[1] * max_nums[2];
+    });
 }
 
 int main() {

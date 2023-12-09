@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+#include <type_traits>
 #include <utility>
 #if __has_include(<print>)
 #include <format>
@@ -22,7 +24,7 @@ constexpr bool is_digit(char ch) { return ch >= '0' && ch <= '9'; }
 
 constexpr bool is_alpha(char ch) { return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z'); }
 
-constexpr std::size_t parse_digits(const auto &r) {
+constexpr std::size_t parse_digits(auto &&r) {
     std::size_t val = 0;
     for (char ch : r) {
         val += ch - '0';
@@ -33,6 +35,13 @@ constexpr std::size_t parse_digits(const auto &r) {
 
 constexpr std::size_t parse_digits(const auto &begin, const auto &end) {
     return parse_digits(std::ranges::subrange(begin, end));
+}
+
+template <std::ranges::input_range R, typename Op = std::identity>
+constexpr auto reduce(R &&r, Op op = {}) {
+    std::invoke_result_t<Op, std::ranges::range_value_t<R>> sum{};
+    for (auto &&i : r) sum += std::invoke(op, FWD(i));
+    return sum;
 }
 
 template <std::ranges::input_range Range1, std::ranges::input_range Range2,
