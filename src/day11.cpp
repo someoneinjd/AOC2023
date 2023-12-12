@@ -43,8 +43,10 @@ constexpr auto solution(const std::string_view str) {
             const auto [min_col, max_col] = std::minmax(y0, y1);
             const auto row_d = max_row - min_row, col_d = max_col - min_col;
             const auto count =
-                util::reduce(galaxy_row | rv::take(max_row) | rv::drop(min_row + 1)) +
-                util::reduce(galaxy_col | rv::take(max_col) | rv::drop(min_col + 1));
+                (row_d > 1 ? util::reduce(galaxy_row | rv::take(max_row) | rv::drop(min_row + 1))
+                           : ZERO) +
+                (col_d > 1 ? util::reduce(galaxy_col | rv::take(max_col) | rv::drop(min_col + 1))
+                           : ZERO);
             sum_0 += distance(count, row_d, col_d, 2);
             sum_1 += distance(count, row_d, col_d, 1000000);
         }
