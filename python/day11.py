@@ -27,9 +27,7 @@ def d(x0: int, y0: int, x1: int, y1: int) -> tuple[int, int, int]:
 
 def distance(count: int, row_d: int, col_d: int, expand: int) -> int:
     return (
-        max(expand * (row_d - 1) + 1, 0)
-        + max(expand * (col_d - 1) + 1, 0)
-        - count * (expand - 1)
+        max(expand * (row_d - 1) + 1, 0) + max(expand * (col_d - 1) + 1, 0) - count * (expand - 1)
     )
 
 

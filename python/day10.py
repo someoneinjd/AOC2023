@@ -14,9 +14,7 @@ class Action(IntEnum):
     Right = 3
 
 
-def get_next(
-    before: Action, current: Tuple[int, int]
-) -> Tuple[Action, Tuple[int, int]]:
+def get_next(before: Action, current: Tuple[int, int]) -> Tuple[Action, Tuple[int, int]]:
     i, j = current
     if graph[i][j] == "F":
         if before == Action.Up:
@@ -122,6 +120,7 @@ while True:
     before, current = get_next(before, current)
 
 path = set(path)
+
 
 def count_inside():
     total_count = 0
