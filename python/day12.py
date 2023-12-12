@@ -1,40 +1,32 @@
-from functools import cache
-
-
-@cache
-def arrangement(cond_str: str, nums: tuple[int, ...]) -> int:
-    if len(nums) == 0:
-        return not any(x == "#" for x in cond_str)
-    elif len(cond_str) == 0:
-        return 0
-    else:
-        n = nums[0]
-        match cond_str[0]:
-            case ".":
-                return arrangement(cond_str[1:], nums)
-            case "?":
-                return arrangement("#" + cond_str[1:], nums) + arrangement(cond_str[1:], nums)
-            case "#":
-                if len(cond_str) < n:
-                    return 0
-                elif len(cond_str) == n and not any(x == "." for x in cond_str):
-                    return len(nums) == 1
+def arrangement(nums: list[int], cond_str: str) -> int:
+    len_i, len_j = len(nums), len(cond_str)
+    a = [[0 for _ in range(len_j + 1)] for _ in range(len_i + 1)]
+    for j in range(len_j + 1):
+        a[0][j] = not any(x == "#" for x in cond_str[len_j - j :])
+    for i in range(1, len_i + 1):
+        for j in range(1, len_j + 1):
+            n = nums[len_i - i]
+            if cond_str[len_j - j] == ".":
+                a[i][j] = a[i][j - 1]
+            else:
+                if j == n and not any(x == "." for x in cond_str[len_j - j :]):
+                    a[i][j] = i == 1
                 elif (
-                    len(cond_str) > n
-                    and not any(x == "." for x in cond_str[:n])
-                    and cond_str[n] != "#"
+                    j > n
+                    and not any(x == "." for x in cond_str[len_j - j : len_j - j + n])
+                    and cond_str[len_j - j + n] != "#"
                 ):
-                    return arrangement(cond_str[n + 1 :], nums[1:])
-                else:
-                    return 0
-        return 0
+                    a[i][j] = a[i - 1][j - n - 1]
+                if cond_str[len_j - j] == "?":
+                    a[i][j] += a[i][j - 1]
+    return a[-1][-1]
 
 
 def count(record: str, repeat=1) -> int:
     cond_str, nums_str = record.split(" ")
     return arrangement(
+        [int(x) for x in nums_str.split(",")] * repeat,
         "?".join(cond_str for _ in range(repeat)),
-        tuple([int(x) for x in nums_str.split(",")] * repeat),
     )
 
 
