@@ -1,4 +1,3 @@
-from typing import Tuple
 from enum import IntEnum
 
 
@@ -7,108 +6,97 @@ graph.insert(0, "." * len(graph[0]))
 graph.append("." * len(graph[0]))
 
 
-class Action(IntEnum):
-    Up = 0
-    Down = 1
-    Left = 2
-    Right = 3
+class Dir(IntEnum):
+    U = 0
+    D = 1
+    L = 2
+    R = 3
 
 
-def get_next(before: Action, current: Tuple[int, int]) -> Tuple[Action, Tuple[int, int]]:
+def get_next(dir: Dir, current: tuple[int, int]) -> tuple[Dir, tuple[int, int]]:
     i, j = current
-    if graph[i][j] == "F":
-        if before == Action.Up:
-            return (Action.Right, (i, j + 1))
-        elif before == Action.Left:
-            return (Action.Down, (i + 1, j))
-        else:
-            raise KeyError()
-    elif graph[i][j] == "7":
-        if before == Action.Right:
-            return (Action.Down, (i + 1, j))
-        elif before == Action.Up:
-            return (Action.Left, (i, j - 1))
-        else:
-            raise KeyError()
-    elif graph[i][j] == "J":
-        if before == Action.Right:
-            return (Action.Up, (i - 1, j))
-        elif before == Action.Down:
-            return (Action.Left, (i, j - 1))
-        else:
-            raise KeyError()
-    elif graph[i][j] == "L":
-        if before == Action.Down:
-            return (Action.Right, (i, j + 1))
-        elif before == Action.Left:
-            return (Action.Up, (i - 1, j))
-        else:
-            raise KeyError()
-    elif graph[i][j] == "-":
-        if before == Action.Left:
-            return (before, (i, j - 1))
-        elif before == Action.Right:
-            return (before, (i, j + 1))
-        else:
-            raise KeyError()
-    elif graph[i][j] == "|":
-        if before == Action.Down:
-            return (before, (i + 1, j))
-        elif before == Action.Up:
-            return (before, (i - 1, j))
-        else:
-            raise KeyError()
-    else:
-        raise KeyError()
+    match graph[i][j]:
+        case "F":
+            if dir == Dir.U:
+                return (Dir.R, (i, j + 1))
+            elif dir == Dir.L:
+                return (Dir.D, (i + 1, j))
+        case "7":
+            if dir == Dir.R:
+                return (Dir.D, (i + 1, j))
+            elif dir == Dir.U:
+                return (Dir.L, (i, j - 1))
+        case "J":
+            if dir == Dir.R:
+                return (Dir.U, (i - 1, j))
+            elif dir == Dir.D:
+                return (Dir.L, (i, j - 1))
+        case "L":
+            if dir == Dir.D:
+                return (Dir.R, (i, j + 1))
+            elif dir == Dir.L:
+                return (Dir.U, (i - 1, j))
+        case "-":
+            if dir == Dir.L:
+                return (dir, (i, j - 1))
+            elif dir == Dir.R:
+                return (dir, (i, j + 1))
+        case "|":
+            if dir == Dir.D:
+                return (dir, (i + 1, j))
+            elif dir == Dir.U:
+                return (dir, (i - 1, j))
+    return dir, current
 
 
 start = (0, 0)
-start_action = Action.Up
+start_action = Dir.U
 for i in range(len(graph)):
     for j in range(len(graph[i])):
         if graph[i][j] == "S":
             start = (i, j)
 
 current = start
-before = Action.Up
+dir = Dir.U
 i, j = current
 all_action = []
 
-if graph[i - 1][j] == "|" or graph[i - 1][j] == "F" or graph[i - 1][j] == "7":
-    current = (i + 1, j)
-    before = Action.Up
-    all_action.append(before)
-if graph[i][j + 1] == "-" or graph[i][j + 1] == "7" or graph[i][j + 1] == "J":
-    current = (i, j + 1)
-    before = Action.Right
-    all_action.append(before)
-if graph[i + 1][j] == "|" or graph[i + 1][j] == "L" or graph[i + 1][j] == "J":
-    current = (i + 1, j)
-    before = Action.Down
-    all_action.append(before)
-if graph[i][j - 1] == "-" or graph[i][j - 1] == "L" or graph[i][j - 1] == "F":
-    current = (i, j - 1)
-    before = Action.Left
-    all_action.append(before)
+match graph[i - 1][j]:
+    case "|" | "F" | "7":
+        current = (i + 1, j)
+        dir = Dir.U
+        all_action.append(dir)
+match graph[i][j + 1]:
+    case "-" | "7" | "J":
+        current = (i, j + 1)
+        dir = Dir.R
+        all_action.append(dir)
+match graph[i + 1][j]:
+    case "|" | "L" | "J":
+        current = (i + 1, j)
+        dir = Dir.D
+        all_action.append(dir)
+match graph[i][j - 1]:
+    case "-" | "L" | "F":
+        current = (i, j - 1)
+        dir = Dir.L
+        all_action.append(dir)
 
 
-_1, _2 = sorted(all_action)
 replace_s = ""
-if (_1, _2) == (Action.Up, Action.Down):
-    replace_s = "|"
-elif (_1, _2) == (Action.Up, Action.Left):
-    replace_s = "J"
-elif (_1, _2) == (Action.Up, Action.Right):
-    replace_s = "L"
-elif (_1, _2) == (Action.Down, Action.Left):
-    replace_s = "7"
-elif (_1, _2) == (Action.Down, Action.Right):
-    replace_s = "F"
-elif (_1, _2) == (Action.Left, Action.Right):
-    replace_s = "-"
-else:
-    print((_1, _2))
-    raise KeyError()
+match sorted(all_action):
+    case [Dir.U, Dir.D]:
+        replace_s = "|"
+    case [Dir.U, Dir.L]:
+        replace_s = "J"
+    case [Dir.U, Dir.R]:
+        replace_s = "L"
+    case [Dir.D, Dir.L]:
+        replace_s = "7"
+    case [Dir.D, Dir.R]:
+        replace_s = "F"
+    case [Dir.L, Dir.R]:
+        replace_s = "-"
 
 path = [start]
 while True:
@@ -117,7 +105,7 @@ while True:
         graph[i] = graph[i].replace("S", replace_s)
         break
     path.append(current)
-    before, current = get_next(before, current)
+    dir, current = get_next(dir, current)
 
 path = set(path)
 
