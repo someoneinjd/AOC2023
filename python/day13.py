@@ -13,9 +13,14 @@ def find_diff(pattern: list[str], diff=0) -> int:
 
 
 def count(pattern: list[str], diff=0) -> int:
-    return 100 * find_diff(pattern, diff) + find_diff(
-        ["".join(pattern[j][i] for j in range(len(pattern))) for i in range(len(pattern[0]))], diff
-    )
+    i = find_diff(pattern, diff)
+    if i != 0:
+        return 100 * i
+    else:
+        return find_diff(
+            ["".join(pattern[j][i] for j in range(len(pattern))) for i in range(len(pattern[0]))],
+            diff,
+        )
 
 
 patterns = open("./dataset/day13.txt").read().strip()
